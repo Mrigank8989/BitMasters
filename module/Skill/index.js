@@ -17,7 +17,7 @@ const getUserProfileWithSkills = async (user_id) => {
           p.website_link,
           p.contact_number,
           p.bio,
-          p.industry, -- ✅ Added industry field
+          p.industry, 
           s.skill_name,
           s.proficiency_level,
           s.years_of_experience
