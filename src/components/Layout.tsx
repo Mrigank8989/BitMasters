@@ -1,82 +1,96 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Rocket, MessageSquare, Users } from 'lucide-react';
+import { Rocket, MessageSquare } from 'lucide-react';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex items-center">
-                <Rocket className="h-8 w-8 text-indigo-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">Learn Loop</span>
+          <div className="flex justify-between items-center h-20">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="Learn Loop Logo" className="h-12 w-12" />
+              <span className="text-2xl font-semibold text-black">Learn Loop</span>
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden md:flex space-x-10">
+              <Link to="/projects" className={`${location.pathname === '/projects' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
+                Project
               </Link>
-              <div className="hidden md:flex md:ml-10 space-x-8">
-                <Link to="/projects" className={`${location.pathname === '/projects' ? 'text-indigo-600' : 'text-gray-500'} hover:text-indigo-600 px-3 py-2 text-sm font-medium`}>Projects</Link>
-                <Link to="/mentorship" className={`${location.pathname === '/mentorship' ? 'text-indigo-600' : 'text-gray-500'} hover:text-indigo-600 px-3 py-2 text-sm font-medium`}>Mentorship</Link>
-                <Link to="/teams" className={`${location.pathname === '/teams' ? 'text-indigo-600' : 'text-gray-500'} hover:text-indigo-600 px-3 py-2 text-sm font-medium`}>Teams</Link>
-                <Link to="/pricing" className={`${location.pathname === '/pricing' ? 'text-indigo-600' : 'text-gray-500'} hover:text-indigo-600 px-3 py-2 text-sm font-medium`}>Pricing</Link>
-              </div>
+              <Link to="/mentorship" className={`${location.pathname === '/mentorship' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
+                Mentorship
+              </Link>
+              <Link to="/teams" className={`${location.pathname === '/teams' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
+                Teams
+              </Link>
+              <Link to="/pricing" className={`${location.pathname === '/pricing' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
+                Pricing
+              </Link>
             </div>
+
+            {/* Action Buttons */}
             <div className="flex items-center space-x-4">
-              <Link to="/signin" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">Sign In</Link>
-              <Link to="/signup" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Join Loop</Link>
+              <Link to="/signup" className="text-black font-medium">Sign Up</Link>
+              <Link to="/signin" className="px-4 py-2 bg-[#3E3EFF] text-white rounded-md font-medium hover:bg-[#2f2fee]">
+                Log In
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
+      {/* Page Content */}
       {children}
 
-      <footer className="bg-white">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Platform</h3>
-              <ul className="mt-4 space-y-4">
-                <li><Link to="/projects" className="text-base text-gray-500 hover:text-gray-900">Browse Projects</Link></li>
-                <li><Link to="/mentorship" className="text-base text-gray-500 hover:text-gray-900">Find Mentors</Link></li>
-                <li><Link to="/teams" className="text-base text-gray-500 hover:text-gray-900">Join Teams</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Resources</h3>
-              <ul className="mt-4 space-y-4">
-                <li><Link to="/blog" className="text-base text-gray-500 hover:text-gray-900">Blog</Link></li>
-                <li><Link to="/guides" className="text-base text-gray-500 hover:text-gray-900">Guides</Link></li>
-                <li><Link to="/faq" className="text-base text-gray-500 hover:text-gray-900">FAQ</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
-              <ul className="mt-4 space-y-4">
-                <li><Link to="/about" className="text-base text-gray-500 hover:text-gray-900">About</Link></li>
-                <li><Link to="/careers" className="text-base text-gray-500 hover:text-gray-900">Careers</Link></li>
-                <li><Link to="/contact" className="text-base text-gray-500 hover:text-gray-900">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
-              <ul className="mt-4 space-y-4">
-                <li><Link to="/privacy" className="text-base text-gray-500 hover:text-gray-900">Privacy</Link></li>
-                <li><Link to="/terms" className="text-base text-gray-500 hover:text-gray-900">Terms</Link></li>
-              </ul>
-            </div>
+      {/* Footer */}
+      <footer className="bg-white mt-16 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+          <div>
+            <h4 className="text-lg font-semibold text-gray-700 mb-4">Explore</h4>
+            <ul className="space-y-2 text-gray-500">
+              <li><Link to="/projects">Discover Project</Link></li>
+              <li><Link to="/mentorship">Connect With Mentors</Link></li>
+              <li><Link to="/teams">Team Up & Collaborate</Link></li>
+            </ul>
           </div>
-          <div className="mt-8 border-t border-gray-200 pt-8">
-            <div className="flex justify-center space-x-6">
-              <MessageSquare className="h-6 w-6 text-gray-400 hover:text-gray-500" />
-              <Users className="h-6 w-6 text-gray-400 hover:text-gray-500" />
-              <Rocket className="h-6 w-6 text-gray-400 hover:text-gray-500" />
-            </div>
-            <div className="mt-8 text-center">
-              <p className="text-base text-gray-400">&copy; 2024 Learn Loop. All rights reserved.</p>
-            </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-700 mb-4">Learn</h4>
+            <ul className="space-y-2 text-gray-500">
+              <li><Link to="/learning-hub">Learning Hub</Link></li>
+              <li><Link to="/articles">Articles & Insights</Link></li>
+              <li><Link to="/guides">How-To-Guides</Link></li>
+              <li><Link to="/help">Help Center</Link></li>
+            </ul>
           </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-700 mb-4">About Us</h4>
+            <ul className="space-y-2 text-gray-500">
+              <li><Link to="/about">Our Story</Link></li>
+              <li><Link to="/careers">Join Our Team</Link></li>
+              <li><Link to="/contact">Get In Touch</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-700 mb-4">Legal</h4>
+            <ul className="space-y-2 text-gray-500">
+              <li><Link to="/privacy">Privacy Policy</Link></li>
+              <li><Link to="/terms">Terms Of Service</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-6 my-6">
+          <MessageSquare className="w-6 h-6 text-gray-400 hover:text-gray-600" />
+          <Rocket className="w-6 h-6 text-gray-400 hover:text-gray-600" />
+        </div>
+
+        <div className="text-center pb-6 text-sm text-gray-400">
+          &copy; 2025 Learn Loop. All rights reserved.
         </div>
       </footer>
     </div>

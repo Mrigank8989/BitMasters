@@ -6,8 +6,10 @@ import { Projects } from './pages/Projects';
 import { Pricing } from './pages/Pricing';
 import { Teams } from './pages/Teams';
 import { Mentorship } from './pages/Mentorship';
-import { SignIn } from './pages/SignIn';
+import  SignIn  from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
+import ForgotPassword from './pages/Forgot'; 
+import ResetPassword from './pages/Reset';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/mentorship" element={<Mentorship />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Layout>
   );
