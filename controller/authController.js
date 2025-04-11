@@ -1,5 +1,6 @@
 const { getAllUsers, createUser } = require("../module/SignUp/index");
 const { loginUser } = require("../module/LogIn/index");
+const jwt = require("jsonwebtoken");
 
 // Fetch all users
 const fetchAllUsers = async (req, res) => {
@@ -17,12 +18,10 @@ const createUserController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Basic validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email, and password are required." });
     }
 
-    // Create new user using signup logic (it already checks email existence)
     const result = await createUser(name, email, password);
 
     if (result.success) {
@@ -36,7 +35,6 @@ const createUserController = async (req, res) => {
   }
 };
 
-// Login controller (SignIn)
 const SignIn = async (req, res) => {
   const { email, password } = req.body;
 
@@ -54,11 +52,43 @@ const SignIn = async (req, res) => {
       return res.status(401).json({ success: false, message: result.message });
     }
 
+    const user = result.user;
+
+    const accessToken = jwt.sign(
+      {
+        user_id: user.user_id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+      {
+        user_id: user.user_id,
+        email: user.email,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" }
+    );
+
+    // 🍪 Set cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log("✅ Access Token:", accessToken);
+    console.log("✅ Refresh Token:", refreshToken);
+
     return res.status(200).json({
       success: true,
-      message: result.message,
-      token: result.token,
-      user: result.user,
+      message: "Login successful. New token created.",
+      accessToken,
+      user,
     });
   } catch (error) {
     console.error("Login Controller Error:", error);
@@ -68,6 +98,7 @@ const SignIn = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   fetchAllUsers,

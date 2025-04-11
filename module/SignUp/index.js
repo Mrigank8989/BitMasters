@@ -2,6 +2,7 @@ const config = require('../../config/db');
 const sql = require('mssql');
 const bcrypt = require('bcrypt');
 
+// Get all users
 const getAllUsers = async () => {
   try {
     let pool = await sql.connect(config);
@@ -13,12 +14,13 @@ const getAllUsers = async () => {
   }
 };
 
+// Create a new student user
 const createUser = async (name, email, password) => {
   try {
-    console.log("Admin Data Received:", name, email, password);
+    console.log("Student Data Received:", name, email, password);
 
     let pool = await sql.connect(config);
-    const role = 'admin';
+    const role = 'student'; // <-- Now registering a student
 
     // Check if email already exists
     const emailCheck = await pool.request()
@@ -30,14 +32,14 @@ const createUser = async (name, email, password) => {
       return { success: false, message: "Email already exists. Please use a different email." };
     }
 
-    // Generate user_id like admin001
+    // Generate user_id like student001
     const result = await pool.request().query(`
-      SELECT MAX(CAST(SUBSTRING(user_id, 6, LEN(user_id)) AS INT)) AS maxId
+      SELECT MAX(CAST(SUBSTRING(user_id, 8, LEN(user_id)) AS INT)) AS maxId
       FROM Users
-      WHERE user_id LIKE 'admin%'
+      WHERE user_id LIKE 'student%'
     `);
     const maxId = result.recordset[0].maxId || 0;
-    const newUserId = 'admin' + (maxId + 1).toString().padStart(3, '0');
+    const newUserId = 'student' + (maxId + 1).toString().padStart(3, '0');
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,11 +56,11 @@ const createUser = async (name, email, password) => {
         VALUES (@UserId, @Name, @Email, @Password, @Role)
       `);
 
-    console.log("Admin successfully added.");
-    return { success: true, message: "Admin registered successfully." };
+    console.log("Student successfully registered.");
+    return { success: true, message: "Student registered successfully." };
   } catch (error) {
-    console.error("Error inserting admin:", error);
-    return { success: false, message: "Failed to register admin." };
+    console.error("Error inserting student:", error);
+    return { success: false, message: "Failed to register student." };
   }
 };
 

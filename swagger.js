@@ -12,7 +12,7 @@ const doc={
 };
 
 const outputfile='./swagger-output.json';
-const routes=['D:/BitMasters/Backend/routes/userRoute.js'];
+const routes=['D:/BitMasters/BitMasters/routes/userRoute.js'];
 
 swaggerAutogen(outputfile, routes, doc).then(() => {
     console.log('Swagger documentation generated successfully');
