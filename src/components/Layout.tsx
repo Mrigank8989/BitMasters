@@ -1,67 +1,88 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Rocket, MessageSquare } from 'lucide-react';
 import img from './image.png';
-export function Layout({ children }: { children: React.ReactNode }) {
-    const [profile, setProfile] = useState(null);
 
+export function Layout({ children }: { children: React.ReactNode }) {
+  const [profile, setProfile] = useState(null);
   const location = useLocation();
-  const token = localStorage.getItem('accessToken'); // Authentication check
+  const token = localStorage.getItem('accessToken');
+
+  const navLinkClass = (path: string) =>
+    `relative pb-1 font-medium transition-colors duration-300 ${
+      location.pathname === path ? 'text-black after:scale-x-100' : 'text-gray-700'
+    } hover:text-black
+    after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-full
+    after:bg-black after:transition-transform after:duration-300 after:scale-x-0 hover:after:scale-x-100 after:origin-left`;
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-20 space-x-4">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <img src={img} alt="Learn Loop Logo" className="h-14 w-14" />
               <span className="text-2xl font-semibold text-black">Learn Loop</span>
             </Link>
 
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-10">
-              <Link to="/projects" className={`${location.pathname === '/projects' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
-                Project
-              </Link>
-              <Link to="/mentorship" className={`${location.pathname === '/mentorship' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
-                Mentorship
-              </Link>
-              <Link to="/teams" className={`${location.pathname === '/teams' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
-                Teams
-              </Link>
-              <Link to="/pricing" className={`${location.pathname === '/pricing' ? 'text-black' : 'text-gray-700'} hover:text-black font-medium`}>
-                Pricing
-              </Link>
-
-              {/* Avatar shown if logged in */}
-              {token && (
-                <Link to="/profile" className="ml-4">
-                  <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name || "s")}&background=random&color=fff&size=128`}
-                    alt="Profile"
-                    className="h-10 w-10 rounded-full object-cover border border-gray-300 hover:ring-2 hover:ring-indigo-500"
-                  />
-                </Link>
-              )}
+            {/* Search Box */}
+            <div className="flex-grow mx-4 hidden md:block">
+              <div className="relative w-full max-w-md mx-auto">
+                <input
+                  type="text"
+                  placeholder="Search projects, mentors, teams..."
+                  className="w-full px-4 py-2 rounded-full border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                />
+                <span className="absolute right-4 top-2.5 text-gray-400 hover:text-indigo-500 transition duration-200 cursor-pointer">
+                  🔍
+                </span>
+              </div>
             </div>
 
-            {/* Sign Up / Log In buttons - Shown only if NOT logged in */}
-            {!token && (
-              <div className="flex items-center space-x-4">
-                <Link to="/signup" className="text-black font-medium">Sign Up</Link>
-                <Link to="/signin" className="px-4 py-2 bg-[#3E3EFF] text-white rounded-md font-medium hover:bg-[#2f2fee]">
-                  Log In
-                </Link>
-              </div>
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center space-x-10">
+              <Link to="/projects" className={navLinkClass('/projects')}>
+                Project
+              </Link>
+              <Link to="/mentorship" className={navLinkClass('/mentorship')}>
+                Mentorship
+              </Link>
+              <Link to="/teams" className={navLinkClass('/teams')}>
+                Teams
+              </Link>
+              <Link to="/pricing" className={navLinkClass('/pricing')}>
+                Pricing
+              </Link>
+            </div>
+
+            {/* Avatar */}
+            {token && (
+              <Link to="/profile" className="ml-4">
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name || 'User')}&background=random&color=fff&size=128`}
+                  alt="Profile"
+                  className="h-10 w-10 rounded-full object-cover border border-gray-300 hover:ring-2 hover:ring-indigo-500"
+                />
+              </Link>
             )}
           </div>
+
+          {/* Sign Up / Log In */}
+          {!token && (
+            <div className="flex items-center justify-end space-x-4 mt-2">
+              <Link to="/signup" className="text-black font-medium">Sign Up</Link>
+              <Link to="/signin" className="px-4 py-2 bg-[#3E3EFF] text-white rounded-md font-medium hover:bg-[#2f2fee]">
+                Log In
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Page Content */}
-      {children}
+      <main>{children}</main>
 
       {/* Footer */}
       <footer className="bg-white mt-16 border-t border-gray-200">

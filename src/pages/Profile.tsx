@@ -120,7 +120,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 relative font-poppins px-4">
+    <div className="min-h-screen bg-gray-100 relative font-poppins px-1">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}

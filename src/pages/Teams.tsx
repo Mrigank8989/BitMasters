@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search, Users, Clock, Briefcase } from 'lucide-react';
 
 export function Teams() {
