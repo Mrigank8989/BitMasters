@@ -8,12 +8,34 @@ export function SignUp() {
   const [password, setPassword] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowSuccess(true);
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 3000);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/SignUp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setShowSuccess(true);
+
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          navigate("/signin");
+        }, 2000);
+      } else {
+        alert("❌ " + data.message);
+      }
+    } catch (error) {
+      console.error("SignUp Error:", error);
+      alert("Something went wrong. Please try again later.");
+    }
   };
 
   return (

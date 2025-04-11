@@ -7,12 +7,42 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
-    setShowSuccess(true);
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 3000);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/SignIn", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setShowSuccess(true);
+
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        }
+
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        setTimeout(() => {
+          navigate("/projects");
+        }, 2000);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Something went wrong. Please try again later.");
+    }
   };
 
   const handleForgotClick = () => {
@@ -21,20 +51,14 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 py-10">
-      <h1 className="text-5xl font-light text-gray-800 mt-10 text-center">
-        LearnLoop
-      </h1>
+      <h1 className="text-5xl font-light text-gray-800 mt-10 text-center">LearnLoop</h1>
 
       <div className="w-full max-w-sm mt-8 p-6 bg-white rounded-3xl shadow-md">
         <h2 className="text-2xl font-semibold mb-2">Sign In</h2>
-      
-        <form onSubmit={handleSubmit}>
 
-          <label className="block text-sm font-bold text-gray-700 mt-3">
-            Email
-          </label>
+        <form onSubmit={handleSubmit}>
+          <label className="block text-sm font-bold text-gray-700 mt-3">Email</label>
           <div className="flex items-center border rounded mt-1 px-3 py-2 bg-white">
-          
             <input
               type="email"
               required
@@ -45,11 +69,8 @@ const SignIn = () => {
             />
           </div>
 
-          <label className="block text-sm font-bold text-gray-700 mt-4">
-            Password
-          </label>
+          <label className="block text-sm font-bold text-gray-700 mt-4">Password</label>
           <div className="flex items-center border rounded mt-1 px-3 py-2 bg-white">
-         
             <input
               type="password"
               required
@@ -70,17 +91,13 @@ const SignIn = () => {
             </button>
           </div>
 
-        
-
           <button
-          type="submit"
-          className="w-full bg-[#3A3AFF] text-white py-2 rounded hover:bg-[#2F2FFF] transition"
-        >
-          confirm 
-        </button>
+            type="submit"
+            className="w-full bg-[#3A3AFF] text-white py-2 rounded hover:bg-[#2F2FFF] transition mt-4"
+          >
+            Confirm
+          </button>
         </form>
-
-       
       </div>
 
       {showSuccess && (

@@ -1,32 +1,27 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { Home } from './pages/Home';
-import { Projects } from './pages/Projects';
-import { Pricing } from './pages/Pricing';
-import { Teams } from './pages/Teams';
-import { Mentorship } from './pages/Mentorship';
-import  SignIn  from './pages/SignIn';
-import { SignUp } from './pages/SignUp';
-import ForgotPassword from './pages/Forgot'; 
-import ResetPassword from './pages/Reset';
-
+import Profile from './pages/Profile';
+import AppRoutes from './AppRoutes';
 function App() {
+  const location = useLocation();
+  const noLayoutRoutes = ['/profile'];
+
+  const isNoLayout = noLayoutRoutes.includes(location.pathname);
+
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/teams" element={<Teams />} />
-        <Route path="/mentorship" element={<Mentorship />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-      </Routes>
-    </Layout>
+    <>
+      {isNoLayout ? (
+        <Routes>
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      ) : (
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      )}
+    </>
   );
 }
 
 export default App;
+
