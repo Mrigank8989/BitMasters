@@ -5,8 +5,37 @@ import img from './image.png';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); // Store the search query
+  const [searchResults, setSearchResults] = useState([]); // Store the search results
   const location = useLocation();
   const token = localStorage.getItem('accessToken');
+
+  // Fetch search results from the server
+  const handleSearch = async (query: string) => {
+    if (query.trim().length === 0) {
+      setSearchResults([]); // If no query, clear results
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/search?searchTerm=${query}`); // Call the backend search endpoint
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data); // Assuming the API returns a list of results
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setSearchResults([]); // Handle the error case gracefully
+    }
+  };
+
+  // Handle input changes and trigger search
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    handleSearch(e.target.value); // Trigger search on input change
+  };
 
   const navLinkClass = (path: string) =>
     `relative pb-1 font-medium transition-colors duration-300 ${
@@ -32,12 +61,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="relative w-full max-w-md mx-auto">
                 <input
                   type="text"
+                  value={searchTerm}
+                  onChange={handleInputChange}
                   placeholder="Search projects, mentors, teams..."
                   className="w-full px-4 py-2 rounded-full border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
                 />
                 <span className="absolute right-4 top-2.5 text-gray-400 hover:text-indigo-500 transition duration-200 cursor-pointer">
                   🔍
                 </span>
+
+                {/* Search Results Dropdown */}
+                {searchResults.length > 0 && (
+                  <ul className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+                    {searchResults.map((result) => (
+                      <li key={result.user_id} className="p-2 hover:bg-gray-100 cursor-pointer">
+                        <Link to={`/profile/${result.user_id}`} className="text-sm text-gray-700">
+                          {result.name} - {result.role}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 
@@ -117,15 +161,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <li><Link to="/terms">Terms Of Service</Link></li>
             </ul>
           </div>
-        </div>
-
-        <div className="flex justify-center space-x-6 my-6">
-          <MessageSquare className="w-6 h-6 text-gray-400 hover:text-gray-600" />
-          <Rocket className="w-6 h-6 text-gray-400 hover:text-gray-600" />
-        </div>
-
-        <div className="text-center pb-6 text-sm text-gray-400">
-          &copy; 2025 Learn Loop. All rights reserved.
         </div>
       </footer>
     </div>
