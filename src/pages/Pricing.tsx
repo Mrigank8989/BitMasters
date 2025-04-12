@@ -19,7 +19,7 @@ export function Pricing() {
     },
     {
       name: 'Pro',
-      price: '19',
+      price: '₹799',
       description: 'Everything you need for serious collaboration',
       features: [
         'All Free features',
@@ -80,9 +80,9 @@ export function Pricing() {
                 <h3 className="text-2xl font-medium text-gray-900">{tier.name}</h3>
                 <div className="mt-4 flex items-baseline justify-center">
                   <span className="text-5xl font-extrabold tracking-tight text-gray-900">
-                    ${tier.price}
+                    {tier.price === 'Custom' ? tier.price : tier.price}
                   </span>
-                  {tier.price !== 'Custom' && (
+                  {tier.price !== '0' && tier.price !== 'Custom' && (
                     <span className="ml-1 text-xl font-semibold text-gray-500">/month</span>
                   )}
                 </div>
