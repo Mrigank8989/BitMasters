@@ -1,40 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Rocket, MessageSquare } from 'lucide-react';
 import img from './image.png';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // Store the search query
-  const [searchResults, setSearchResults] = useState([]); // Store the search results
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
   const token = localStorage.getItem('accessToken');
 
-  // Fetch search results from the server
   const handleSearch = async (query: string) => {
     if (query.trim().length === 0) {
-      setSearchResults([]); // If no query, clear results
+      setSearchResults([]);
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/search?searchTerm=${query}`); // Call the backend search endpoint
+      const response = await fetch(`http://localhost:5000/api/search?searchTerm=${query}`);
       if (response.ok) {
         const data = await response.json();
-        setSearchResults(data); // Assuming the API returns a list of results
+        setSearchResults(data);
       } else {
         setSearchResults([]);
       }
     } catch (error) {
       console.error('Error fetching search results:', error);
-      setSearchResults([]); // Handle the error case gracefully
+      setSearchResults([]);
     }
   };
 
-  // Handle input changes and trigger search
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    handleSearch(e.target.value); // Trigger search on input change
+    handleSearch(e.target.value);
   };
 
   const navLinkClass = (path: string) =>
@@ -49,83 +46,86 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Header */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 space-x-4">
+          <div className="flex flex-wrap md:flex-nowrap justify-between items-center py-4">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <img src={img} alt="Learn Loop Logo" className="h-14 w-14" />
-              <span className="text-2xl font-semibold text-black">Learn Loop</span>
-            </Link>
+            <div className="flex items-center space-x-2">
+              <Link to="/" className="flex items-center space-x-2">
+                <img src={img} alt="Learn Loop Logo" className="h-12 w-12" />
+                <span className="text-2xl font-semibold text-black">Learn Loop</span>
+              </Link>
+            </div>
 
-            {/* Search Box */}
-            <div className="flex-grow mx-4 hidden md:block">
-              <div className="relative w-full max-w-md mx-auto">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleInputChange}
-                  placeholder="Search projects, mentors, teams..."
-                  className="w-full px-4 py-2 rounded-full border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
-                />
-                <span className="absolute right-4 top-2.5 text-gray-400 hover:text-indigo-500 transition duration-200 cursor-pointer">
-                  🔍
-                </span>
+            {/* Search */}
+            <div className="relative w-full max-w-md mx-auto hidden md:block">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleInputChange}
+                placeholder="Search projects, mentors, teams..."
+                className="w-full px-4 py-2 rounded-full border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+              />
+              <span className="absolute right-4 top-2.5 text-gray-400 hover:text-indigo-500 transition duration-200 cursor-pointer">
+                🔍
+              </span>
 
-                {/* Search Results Dropdown */}
-                {searchResults.length > 0 && (
-                  <ul className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
-                    {searchResults.map((result) => (
-                      <li key={result.user_id} className="p-2 hover:bg-gray-100 cursor-pointer">
-                        <Link to={`/profile/${result.user_id}`} className="text-sm text-gray-700">
-                          {result.name} - {result.role}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+              {searchResults.length > 0 && (
+                <ul className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+                  {searchResults.map((result) => (
+                    <li key={result.user_id} className="p-2 hover:bg-gray-100 cursor-pointer">
+                      <Link to={`/profile/${result.user_id}`} className="text-sm text-gray-700">
+                        {result.name} - {result.role}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Navigation + Auth */}
+            <div className="flex items-center space-x-6 mt-4 md:mt-0">
+              <div className="hidden md:flex items-center space-x-8">
+                <Link to="/projects" className={navLinkClass('/projects')}>
+                  Project
+                </Link>
+                <Link to="/mentorship" className={navLinkClass('/mentorship')}>
+                  Mentorship
+                </Link>
+                <Link to="/teams" className={navLinkClass('/teams')}>
+                  Teams
+                </Link>
+                <Link to="/pricing" className={navLinkClass('/pricing')}>
+                  Pricing
+                </Link>
               </div>
-            </div>
 
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-10">
-              <Link to="/projects" className={navLinkClass('/projects')}>
-                Project
-              </Link>
-              <Link to="/mentorship" className={navLinkClass('/mentorship')}>
-                Mentorship
-              </Link>
-              <Link to="/teams" className={navLinkClass('/teams')}>
-                Teams
-              </Link>
-              <Link to="/pricing" className={navLinkClass('/pricing')}>
-                Pricing
-              </Link>
+              {/* Avatar or Auth Buttons */}
+              {token ? (
+                <Link to="/profile">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name || 'User')}&background=random&color=fff&size=128`}
+                    alt="Profile"
+                    className="h-10 w-10 rounded-full object-cover border border-gray-300 hover:ring-2 hover:ring-indigo-500"
+                  />
+                </Link>
+              ) : (
+                <div className="flex items-center space-x-4 ml-4 md:ml-8">
+                  <Link to="/signup" className="text-black font-medium">
+                    Sign Up
+                  </Link>
+                  <Link
+                    to="/signin"
+                    className="px-4 py-2 bg-[#3E3EFF] text-white rounded-md font-medium hover:bg-[#2f2fee]"
+                  >
+                    Log In
+                  </Link>
+                </div>
+              )}
             </div>
-
-            {/* Avatar */}
-            {token && (
-              <Link to="/profile" className="ml-4">
-                <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.name || 'User')}&background=random&color=fff&size=128`}
-                  alt="Profile"
-                  className="h-10 w-10 rounded-full object-cover border border-gray-300 hover:ring-2 hover:ring-indigo-500"
-                />
-              </Link>
-            )}
           </div>
-
-          {/* Sign Up / Log In */}
-          {!token && (
-            <div className="flex items-center justify-end space-x-4 mt-2">
-              <Link to="/signup" className="text-black font-medium">Sign Up</Link>
-              <Link to="/signin" className="px-4 py-2 bg-[#3E3EFF] text-white rounded-md font-medium hover:bg-[#2f2fee]">
-                Log In
-              </Link>
-            </div>
-          )}
         </div>
       </nav>
 
-      {/* Page Content */}
+      {/* Main Content */}
       <main>{children}</main>
 
       {/* Footer */}
