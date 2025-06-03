@@ -2,6 +2,7 @@ const { getAllUsers, createUser } = require("../module/SignUp/index");
 const { loginUser } = require("../module/LogIn/index");
 const jwt = require("jsonwebtoken");
 
+
 // Fetch all users
 const fetchAllUsers = async (req, res) => {
   try {
@@ -13,16 +14,25 @@ const fetchAllUsers = async (req, res) => {
   }
 };
 
-// Create user (SignUp)
+// Create user (Sign Up)
 const createUserController = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, full_name, password, is_admin } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required." });
+    // Validate required fields
+    if (!username || !full_name || !password) {
+      return res.status(400).json({
+        message: "Username, full name, and password are required.",
+      });
     }
 
-    const result = await createUser(name, email, password);
+    // Create user using model function
+    const result = await createUser(
+      username,
+      full_name,
+      password,
+      is_admin || false // default false
+    );
 
     if (result.success) {
       return res.status(201).json({ message: result.message });
@@ -36,17 +46,17 @@ const createUserController = async (req, res) => {
 };
 
 const SignIn = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!email || !password) {
+  if (!username || !password) {
     return res.status(400).json({
       success: false,
-      message: "Email and password are required.",
+      message: "Username and password are required.",
     });
   }
 
   try {
-    const result = await loginUser(email, password);
+    const result = await loginUser(username, password);
 
     if (!result.success) {
       return res.status(401).json({ success: false, message: result.message });
@@ -57,8 +67,8 @@ const SignIn = async (req, res) => {
     const accessToken = jwt.sign(
       {
         user_id: user.user_id,
-        email: user.email,
-        role: user.role,
+        username: user.username,
+        is_admin: user.is_admin,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "15m" }
@@ -67,26 +77,25 @@ const SignIn = async (req, res) => {
     const refreshToken = jwt.sign(
       {
         user_id: user.user_id,
-        email: user.email,
+        username: user.username,
       },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d" }
     );
 
-    // 🍪 Set cookie
+    // Set HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: false, // set to true in production with HTTPS
       sameSite: "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    console.log("✅ Access Token:", accessToken);
-    console.log("✅ Refresh Token:", refreshToken);
+    console.log(" Access Token:", accessToken);
 
     return res.status(200).json({
       success: true,
-      message: "Login successful. New token created.",
+      message: "Login successful. Token created.",
       accessToken,
       user,
     });

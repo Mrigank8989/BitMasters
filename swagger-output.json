@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "My test",
-    "description": "Api testing for axeSuite-admin-panel just got it",
+    "description": "Api testing for NCC project just got it",
     "version": "1.0.0"
   },
   "host": "localhost:5000",
@@ -34,13 +34,16 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "username": {
                   "example": "any"
                 },
-                "email": {
+                "full_name": {
                   "example": "any"
                 },
                 "password": {
+                  "example": "any"
+                },
+                "is_admin": {
                   "example": "any"
                 }
               }
@@ -70,7 +73,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "email": {
+                "username": {
                   "example": "any"
                 },
                 "password": {
@@ -96,36 +99,47 @@
         }
       }
     },
-    "/userProfile/{user_id}": {
-      "get": {
+    "/add-question": {
+      "post": {
         "description": "",
         "parameters": [
           {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "quiz_id": {
+                  "example": "any"
+                },
+                "question_text": {
+                  "example": "any"
+                },
+                "option_1": {
+                  "example": "any"
+                },
+                "option_2": {
+                  "example": "any"
+                },
+                "option_3": {
+                  "example": "any"
+                },
+                "option_4": {
+                  "example": "any"
+                },
+                "correct_option": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
+          "201": {
+            "description": "Created"
           },
           "500": {
             "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/insertProfile": {
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
           }
         }
       }
